@@ -19,8 +19,8 @@ name=$(basename ${path%.*})
 # generate password
 password=$(pwgen -s 16 1)
 
-# http://stackoverflow.com/a/246128
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# http://stackoverflow.com/q/4774054
+dir=$(dirname $(readlink -f "$0"))
 
 # copy and configure phpLiteAdmin
 temp=$(mktemp -d)
