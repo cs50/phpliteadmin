@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# usage
+if [[ $# -ne 1 ]]; then
+    echo "Usage: phpliteadmin FILENAME"
+    exit 1
+fi
+if [[ ! -f "$1" ]]; then
+    echo "No such file"
+    exit 1
+fi
+if [[ ! -r "$1" ]]; then
+    echo "Permission denied"
+    exit 1
+fi
+path=$(readlink -e "$1" | sed "s/^\/home\/ubuntu/~/")
+name=$(basename ${path%.*})
+
+# generate password
+password=$(pwgen -s 16 1)
+
+# http://stackoverflow.com/a/246128
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# copy and configure phpLiteAdmin
+temp=$(mktemp -d)
+if [[ $? -ne 0 || -z "$temp" ]]; then
+    echo "Could not create a temporary directory"
+    exit 1
+fi
+cp "$dir/../share/phpliteadmin.css" "$temp/"
+cp "$dir/../share/phpliteadmin.php" "$temp/"
+sed -i "s/\$_POST\['login'\]/\$_REQUEST['login']/" "$temp/phpliteadmin.php"
+sed -i "s/\$_POST\['password'\]/\$_REQUEST['password']/" "$temp/phpliteadmin.php"
+sed -E -i "s/(\\\$auth->attemptGrant\(.*);/{ if (\1) { header('Location: phpliteadmin.php'); exit(); } }/" "$temp/phpliteadmin.php"
+sed -E -i "s/.*<input[^>]+name='remember'[^>]+>.*//" "$temp/phpliteadmin.php"
+cat > "$temp/phpliteadmin.config.php" <<EOF
+<?php 
+
+    \$databases = [["name" => "$name", "path" => "$path"]];
+    \$directory = false;
+    \$maxSavedQueries = 50;
+    \$password = "$password";
+
+?>
+EOF
+cat > "$temp/index.php" <<EOF
+<?php
+
+    header("Location: phpliteadmin.php?login=true&password={\$_GET["pin"]}");
+    exit();
+
+?>
+EOF
+
+# serve copy
+php -S 0.0.0.0:8081 -t "$temp" > /dev/null 2>&1 &
+pid=$!
+if [[ ! -z "$C9_HOSTNAME" ]]; then
+    echo c9 exec webserver "https://$C9_HOSTNAME:8081/"
+    echo "Running phpLiteAdmin at https://$C9_HOSTNAME:8081/?pin=$password"
+else
+    echo "Running phpLiteAdmin at http://localhost:8081/?pin=$password"
+fi
+echo "Exit with ctrl-c."
+
+# listen for ctrl-c
+# http://stackoverflow.com/a/5722850
+trap "{ kill -9 $pid; wait $pid 2> /dev/null; echo; }" INT
+
+# wait for server to exit
+wait $pid
+
+# remove copy
+rm -rf "$temp"
