@@ -34,9 +34,15 @@ sed -E -i "s/.*<input[^>]+name='remember'[^>]+>.*//" "$temp/phpliteadmin.php"
 cat > "$temp/phpliteadmin.config.php" <<EOF
 <?php 
 
+    // only support one database
     \$databases = [["name" => "$name", "path" => "$path"]];
     \$directory = false;
+
+    // pseudorandom password
     \$password = "$password";
+
+    // instead of /var/lib/php5, which is only writable by www-data
+    session_save_path(sys_get_temp_dir());
 
 ?>
 EOF
