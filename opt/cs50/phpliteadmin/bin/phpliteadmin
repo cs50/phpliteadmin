@@ -55,9 +55,10 @@ EOF
 # serve copy
 php -S 0.0.0.0:8081 -t "$temp" > /dev/null 2>&1 &
 pid=$!
-if [[ ! -z "$C9_HOSTNAME" ]]; then
-    echo c9 exec webserver "https://$C9_HOSTNAME:8081/"
-    echo "Running phpLiteAdmin at https://$C9_HOSTNAME:8081/?pin=$password"
+if command -v hostname50 > /dev/null 2>&1; then
+    hostname=$(hostname50)
+    echo c9 exec webserver "https://$hostname:8081/"
+    echo "Running phpLiteAdmin at https://$hostname:8081/?pin=$password"
 else
     echo "Running phpLiteAdmin at http://localhost:8081/?pin=$password"
 fi
@@ -69,6 +70,10 @@ trap "{ kill -9 $pid; wait $pid 2> /dev/null; echo; }" INT
 
 # wait for server to exit
 wait $pid
+if [[ $? -eq 1 ]]; then
+    echo "Could not start phpLiteAdmin. Is it running in another terminal window?"
+    exit 1
+fi
 
 # remove copy
 rm -rf "$temp"
