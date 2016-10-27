@@ -57,7 +57,7 @@ php -S 0.0.0.0:8081 -t "$temp" > /dev/null 2>&1 &
 pid=$!
 if command -v hostname50 > /dev/null 2>&1; then
     hostname=$(hostname50)
-    echo c9 exec visit "https://$hostname:8081/"
+    echo c9 exec browser "https://$hostname:8081/"
     echo "Running phpLiteAdmin at https://$hostname:8081/?pin=$password"
 else
     echo "Running phpLiteAdmin at http://localhost:8081/?pin=$password"
