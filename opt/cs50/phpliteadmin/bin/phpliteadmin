@@ -9,7 +9,8 @@ if [[ -f "$1" && ! -r "$1" ]]; then
     echo "Permission denied"
     exit 1
 fi
-path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
+#path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
+path=$(readlink -m "$1")
 name=$(basename ${path%.*})
 
 # generate password
@@ -28,7 +29,7 @@ cp "$dir/../share/phpliteadmin.css" "$temp/"
 cp "$dir/../share/phpliteadmin.php" "$temp/"
 sed -i "s/\$_POST\['login'\]/\$_REQUEST['login']/" "$temp/phpliteadmin.php"
 sed -i "s/\$_POST\['password'\]/\$_REQUEST['password']/" "$temp/phpliteadmin.php"
-sed -E -i "s/(\\\$auth->attemptGrant\(.*);/{ if (\1) { header('Location: phpliteadmin.php'); exit(); } }/" "$temp/phpliteadmin.php"
+#sed -E -i "s/(\\\$auth->attemptGrant\(.*);/{ if (\1) { header('Location: phpliteadmin.php'); exit(); } }/" "$temp/phpliteadmin.php"
 sed -E -i "s/.*<input[^>]+name='remember'[^>]+>.*//" "$temp/phpliteadmin.php"
 cat > "$temp/phpliteadmin.config.php" <<EOF
 <?php 
