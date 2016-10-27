@@ -28,6 +28,7 @@ deb:
 	--after-remove after-remove.sh \
 	--deb-no-default-config-files \
 	--depends coreutils \
+	--depends curl \
 	--depends mktemp \
 	--depends php5-cli \
 	--depends pwgen \
