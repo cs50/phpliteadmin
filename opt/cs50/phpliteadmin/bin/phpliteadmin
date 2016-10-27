@@ -39,7 +39,6 @@ cat > "$temp/phpliteadmin.config.php" <<EOF
 
     \$databases = [["name" => "$name", "path" => "$path"]];
     \$directory = false;
-    \$maxSavedQueries = 50;
     \$password = "$password";
 
 ?>
