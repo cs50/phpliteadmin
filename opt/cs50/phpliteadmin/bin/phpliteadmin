@@ -5,15 +5,11 @@ if [[ $# -ne 1 ]]; then
     echo "Usage: phpliteadmin FILENAME"
     exit 1
 fi
-if [[ ! -f "$1" ]]; then
-    echo "No such file"
-    exit 1
-fi
-if [[ ! -r "$1" ]]; then
+if [[ -f "$1" && ! -r "$1" ]]; then
     echo "Permission denied"
     exit 1
 fi
-path=$(readlink -e "$1" | sed "s/^\/home\/ubuntu/~/")
+path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
 name=$(basename ${path%.*})
 
 # generate password
@@ -63,7 +59,7 @@ php -S 0.0.0.0:8081 -t "$temp" > /dev/null 2>&1 &
 pid=$!
 if command -v hostname50 > /dev/null 2>&1; then
     hostname=$(hostname50)
-    echo c9 exec browser "https://$hostname:8081/?pin=$password"
+    #c9 exec browser "https://$hostname:8081/?pin=$password"
     echo "Running phpLiteAdmin at https://$hostname:8081/?pin=$password"
 else
     echo "Running phpLiteAdmin at http://localhost:8081/?pin=$password"

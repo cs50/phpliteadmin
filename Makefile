@@ -1,11 +1,11 @@
 MAINTAINER = "CS50 <sysadmins@cs50.harvard.edu>"
 NAME = phpliteadmin
-VERSION = 1.0.0
+VERSION = 1.1.0
 
 .PHONY: bash
 bash:
 	docker build -t phpliteadmin .
-	docker run -i --rm -v "$(PWD)":/root -t phpliteadmin
+	docker run -i --rm -p 8080:8080 -p 8081:8081 -v "$(PWD)":/root -t phpliteadmin
 
 .PHONY: build
 build:
