@@ -1,6 +1,6 @@
 MAINTAINER = "CS50 <sysadmins@cs50.harvard.edu>"
 NAME = phpliteadmin
-VERSION = 1.1.0
+VERSION = 1.1.1
 
 .PHONY: bash
 bash:
@@ -31,5 +31,6 @@ deb:
 	--depends curl \
 	--depends mktemp \
 	--depends php5-cli \
+	--depends php5-sqlite \
 	--depends pwgen \
 	opt
