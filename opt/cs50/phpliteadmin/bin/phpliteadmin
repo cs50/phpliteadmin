@@ -70,9 +70,7 @@ pid=$!
 if command -v hostname50 > /dev/null 2>&1; then
     hostname=$(hostname50)
     #c9 exec browser "https://$hostname:8081/?pin=$password"
-    echo "Running phpLiteAdmin at https://$hostname:8081/?pin=$password"
-else
-    echo "Running phpLiteAdmin at http://localhost:8081/?pin=$password"
+    echo "Running phpLiteAdmin at https://${hostname%:*}:8081/?pin=$password"
 fi
 echo -n "Exit with ctrl-c..."
 
