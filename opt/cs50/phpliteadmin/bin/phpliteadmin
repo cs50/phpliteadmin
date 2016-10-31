@@ -44,6 +44,9 @@ cat > "$temp/phpliteadmin.config.php" <<EOF
     // instead of /var/lib/php5, which is only writable by www-data
     session_save_path(sys_get_temp_dir());
 
+    // disable garbage collection of session
+    ini_set("session.gc_probability", 0);
+
 ?>
 EOF
 cat > "$temp/index.php" <<EOF
