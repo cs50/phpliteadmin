@@ -5,8 +5,12 @@ if [[ $# -ne 1 ]]; then
     echo "Usage: phpliteadmin FILENAME"
     exit 1
 fi
-if [[ -f "$1" && ! -r "$1" ]]; then
-    echo "Permission denied"
+if [[ ! -f "$1" ]]; then
+    echo "phpliteadmin: $1: No such file"
+    exit 1
+fi
+if [[ ! -r "$1" ]]; then
+    echo "phpliteadmin: $1: Permission denied"
     exit 1
 fi
 #path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
