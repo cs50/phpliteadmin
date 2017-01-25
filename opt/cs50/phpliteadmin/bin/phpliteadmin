@@ -74,6 +74,7 @@ pid=$!
 if command -v hostname50 > /dev/null 2>&1; then
     [ $IDE_OFFLINE ] && protocol=http || protocol=https
     hostname=$(hostname50)
+    # TODO, once command ready
     #c9 exec browser "https://$hostname:8081/?password=$password"
     echo "Running phpLiteAdmin at $protocol://${hostname%:*}:8081/?password=$password"
 else
