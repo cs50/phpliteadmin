@@ -83,8 +83,16 @@ cat > "$temp/index.php" <<EOF
 EOF
 
 # check if already running
-if curl -I http://localhost:$PORT/ > /dev/null 2>&1; then
-    echo "Could not start phpLiteAdmin. Is it running in another terminal window?"
+pids=$(pgrep -x phpliteadmin)
+for p in $pids; do
+    if [ $p -ne $$ ]; then
+        kill -HUP $p &>/dev/null
+        while kill -0 $p &>/dev/null; do sleep 1; done;
+    fi
+done
+
+if curl -I http://localhost:$PORT > /dev/null 2>&1; then
+    echo "Could not start phpLiteAdmin."
     exit 1
 fi
 
@@ -99,10 +107,7 @@ echo -n "Exit with ctrl-c..."
 
 # listen for ctrl-c
 # http://stackoverflow.com/a/5722850
-trap "{ kill -9 $pid; wait $pid 2> /dev/null; echo; }" INT
+trap "{ kill -9 $pid &>/dev/null; rm -rf "$tmp"; echo; }" EXIT
 
 # wait for server to exit
 wait $pid
-
-# remove copy
-rm -rf "$temp"
