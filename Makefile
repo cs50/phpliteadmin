@@ -16,8 +16,9 @@ clean:
 	rm -f $(NAME)_$(VERSION)_*.deb
 
 .PHONY: deb
-deb:
-	rm -f $(NAME)_$(VERSION)_*.deb
+deb: clean
+	chmod -R a+rX opt
+	chmod -R a+x opt/cs50/phpliteadmin/bin/*
 	fpm \
 	-m $(MAINTAINER) \
 	-n $(NAME) \
