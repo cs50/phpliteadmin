@@ -5,7 +5,7 @@ VERSION = 1.2.1
 .PHONY: bash
 bash:
 	docker build -t phpliteadmin .
-	docker run -i --rm -p 8080:8080 -p 8081:8081 -v "$(PWD)":/root -t phpliteadmin
+	docker run -i --rm -p 8080-8081:8080-8081 -v "$(PWD)":/root -t phpliteadmin
 
 .PHONY: build
 build:
@@ -13,10 +13,14 @@ build:
 
 .PHONY: clean
 clean:
+	rm -f opt/cs50/bin/phpliteadmin
+	rmdir --ignore-fail-on-non-empty -p opt/cs50/bin/ &>/dev/null
 	rm -f $(NAME)_$(VERSION)_*.deb
 
 .PHONY: deb
 deb: clean
+	mkdir -p opt/cs50/bin/
+	ln -s /opt/cs50/phpliteadmin/bin/phpliteadmin -t opt/cs50/bin/
 	chmod -R a+rX opt
 	chmod -R a+x opt/cs50/phpliteadmin/bin/*
 	fpm \
@@ -25,8 +29,6 @@ deb: clean
 	-s dir \
 	-t deb \
 	-v $(VERSION) \
-	--after-install after-install.sh \
-	--after-remove after-remove.sh \
 	--deb-no-default-config-files \
 	--depends coreutils \
 	--depends curl \

@@ -1,3 +1,4 @@
 .*
 !.gitignore
 *.deb
+opt/cs50/bin/phpliteadmin
