@@ -101,7 +101,7 @@ php -S 0.0.0.0:$PORT -t "$temp" > /dev/null 2>&1 &
 pid=$!
 
 url="$URL/?password=$password"
-$C9 browser "$url"
+# $C9 browser "$url"
 echo "Running phpLiteAdmin at $url"
 echo -n "Exit with ctrl-c..."
 
