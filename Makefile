@@ -1,6 +1,6 @@
 MAINTAINER = "CS50 <sysadmins@cs50.harvard.edu>"
 NAME = phpliteadmin
-VERSION = 1.2.0
+VERSION = 1.2.1
 
 .PHONY: bash
 bash:
