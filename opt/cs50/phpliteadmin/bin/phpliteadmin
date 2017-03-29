@@ -13,6 +13,26 @@ if [[ ! -r "$1" ]]; then
     echo "phpliteadmin: $1: Permission denied"
     exit 1
 fi
+
+if [ $IDE_OFFLINE ]; then
+    C9="/var/c9sdk/bin/c9"
+    PROTOCOL="http"
+else
+    C9="/mnt/shared/sbin/c9"
+    PROTOCOL="https"
+fi
+
+C9="$C9 exec"
+
+if command -v hostname50 > /dev/null 2>&1; then
+    HOSTNAME=$(hostname50 | sed "s/:.*$//")
+else
+    HOSTNAME="127.0.0.1"
+fi
+
+PORT="8081"
+URL="$PROTOCOL://$HOSTNAME:$PORT"
+
 #path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
 path=$(readlink -m "$1")
 name=$(basename ${path%.*})
@@ -36,7 +56,7 @@ sed -i "s/\$_POST\['password'\]/\$_REQUEST['password']/" "$temp/phpliteadmin.php
 #sed -E -i "s/(\\\$auth->attemptGrant\(.*);/{ if (\1) { header('Location: phpliteadmin.php'); exit(); } }/" "$temp/phpliteadmin.php"
 sed -E -i "s/.*<input[^>]+name='remember'[^>]+>.*//" "$temp/phpliteadmin.php"
 cat > "$temp/phpliteadmin.config.php" <<EOF
-<?php 
+<?php
 
     // only support one database
     \$databases = [["name" => "$name", "path" => "$path"]];
@@ -63,31 +83,31 @@ cat > "$temp/index.php" <<EOF
 EOF
 
 # check if already running
-if curl -I http://localhost:8081/ > /dev/null 2>&1; then
-    echo "Could not start phpLiteAdmin. Is it running in another terminal window?"
+pids=$(pgrep -x phpliteadmin)
+for p in $pids; do
+    if [ $p -ne $$ ]; then
+        kill -HUP $p &>/dev/null
+        while kill -0 $p &>/dev/null; do sleep 1; done;
+    fi
+done
+
+if curl -I http://localhost:$PORT > /dev/null 2>&1; then
+    echo "Could not start phpLiteAdmin."
     exit 1
 fi
 
 # serve copy
-php -S 0.0.0.0:8081 -t "$temp" > /dev/null 2>&1 &
+php -S 0.0.0.0:$PORT -t "$temp" > /dev/null 2>&1 &
 pid=$!
-if command -v hostname50 > /dev/null 2>&1; then
-    [ $IDE_OFFLINE ] && protocol=http || protocol=https
-    hostname=$(hostname50)
-    # TODO, once command ready
-    #c9 exec browser "https://$hostname:8081/?password=$password"
-    echo "Running phpLiteAdmin at $protocol://${hostname%:*}:8081/?password=$password"
-else
-    echo "Running phpLiteAdmin at http://127.0.0.1:8081/?password=$password"
-fi
+
+url="$URL/?password=$password"
+# $C9 browser "$url"
+echo "Running phpLiteAdmin at $url"
 echo -n "Exit with ctrl-c..."
 
 # listen for ctrl-c
 # http://stackoverflow.com/a/5722850
-trap "{ kill -9 $pid; wait $pid 2> /dev/null; echo; }" INT
+trap "{ kill -9 $pid &>/dev/null; rm -rf "$temp"; echo; }" EXIT
 
 # wait for server to exit
 wait $pid
-
-# remove copy
-rm -rf "$temp"
