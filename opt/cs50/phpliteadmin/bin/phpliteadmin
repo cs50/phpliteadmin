@@ -107,7 +107,7 @@ echo -n "Exit with ctrl-c..."
 
 # listen for ctrl-c
 # http://stackoverflow.com/a/5722850
-trap "{ kill -9 $pid &>/dev/null; rm -rf "$tmp"; echo; }" EXIT
+trap "{ kill -9 $pid &>/dev/null; rm -rf "$temp"; echo; }" EXIT
 
 # wait for server to exit
 wait $pid
