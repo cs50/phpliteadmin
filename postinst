@@ -1,0 +1,2 @@
+mkdir -p /opt/cs50/bin/
+ln -sf /opt/cs50/phpliteadmin/bin/phpliteadmin -t /opt/cs50/bin/
