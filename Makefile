@@ -13,10 +13,12 @@ build:
 
 .PHONY: clean
 clean:
-	rm -f $(NAME)_$(VERSION)_*.deb
+	rm -rf opt $(NAME)_$(VERSION)_*.deb
 
 .PHONY: deb
 deb: clean
+	mkdir -p opt/cs50/phpliteadmin
+	cp -r bin share opt/cs50/phpliteadmin
 	chmod -R a+rX opt
 	chmod -R a+x opt/cs50/phpliteadmin/bin/*
 	fpm \
