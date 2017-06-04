@@ -14,7 +14,7 @@ cd $DEBPATH
 rm Release InRelease Release.gpg Packages Packages.gz
 
 # create Packages index (lists packages metadata)
-dpkg-scanpackages . $TRAVIS_BUILD_DIR/.travis/override.trusty.main > Packages
+dpkg-scanpackages . > Packages
 
 # remove leading "./" from deb paths
 # https://wiki.debian.org/DebianRepository/Format?action=show&redirect=RepositoryFormat#Filename
