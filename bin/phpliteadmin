@@ -100,6 +100,9 @@ fi
 php -S 0.0.0.0:$PORT -t "$temp" > /dev/null 2>&1 &
 pid=$!
 
+# wait till server is listening
+while curl -I http://localhost:$PORT &> /dev/null; do sleep .5; done
+
 url="$URL/?password=$password"
 # $C9 browser "$url"
 echo "Running phpLiteAdmin at $url"
