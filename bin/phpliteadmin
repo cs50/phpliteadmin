@@ -14,24 +14,20 @@ if [[ ! -r "$1" ]]; then
     exit 1
 fi
 
-if [ $IDE_OFFLINE ]; then
+if [ "${IDE_OFFLINE+x}" ]; then
     C9="/var/c9sdk/bin/c9"
-    PROTOCOL="http"
 else
     C9="/mnt/shared/sbin/c9"
-    PROTOCOL="https"
 fi
 
 C9="$C9 exec"
 
 if command -v hostname50 > /dev/null 2>&1; then
-    HOSTNAME=$(hostname50 | sed "s/:.*$//")
-else
-    HOSTNAME="127.0.0.1"
+    HOSTNAME=$(hostname50 --protocol)
 fi
 
 PORT="8081"
-URL="$PROTOCOL://$HOSTNAME:$PORT"
+URL="$HOSTNAME:$PORT"
 
 #path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
 path=$(readlink -m "$1")
