@@ -1,16 +1,36 @@
 #!/bin/bash
 
+# echos to stderr
+function echo_err() {
+    >&2 echo "$1"
+}
+
 # usage
-if [[ $# -ne 1 ]]; then
-    echo "Usage: phpliteadmin FILENAME"
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    echo_err "Usage: phpliteadmin [--url-only] FILENAME"
     exit 1
 fi
-if [[ ! -f "$1" ]]; then
-    echo "phpliteadmin: $1: No such file"
+
+# parse command-line args
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --url-only)
+            URL_ONLY=1
+            ;;
+        *)
+            DB_FILE="$1"
+            ;;
+    esac
+
+    shift
+done
+
+if [[ ! -f "$DB_FILE" ]]; then
+    echo_err "phpliteadmin: $DB_FILE: No such file"
     exit 1
 fi
-if [[ ! -r "$1" ]]; then
-    echo "phpliteadmin: $1: Permission denied"
+if [[ ! -r "$DB_FILE" ]]; then
+    echo_err "phpliteadmin: $DB_FILE: Permission denied"
     exit 1
 fi
 
@@ -28,9 +48,7 @@ fi
 
 PORT="8081"
 URL="$HOSTNAME:$PORT"
-
-#path=$(readlink -m "$1" | sed "s/^\/home\/ubuntu/~/")
-path=$(readlink -m "$1")
+path=$(readlink -m "$DB_FILE")
 name=$(basename ${path%.*})
 
 # generate password
@@ -42,7 +60,7 @@ dir=$(dirname $(readlink -f "$0"))
 # copy and configure phpLiteAdmin
 temp=$(mktemp -d)
 if [[ $? -ne 0 || -z "$temp" ]]; then
-    echo "Could not create a temporary directory"
+    echo_err "Could not create a temporary directory"
     exit 1
 fi
 cp "$dir/../share/phpliteadmin.css" "$temp/"
@@ -88,7 +106,7 @@ for p in $pids; do
 done
 
 if curl -I http://localhost:$PORT > /dev/null 2>&1; then
-    echo "Could not start phpLiteAdmin."
+    echo_err "Could not start phpLiteAdmin."
     exit 1
 fi
 
@@ -104,14 +122,19 @@ while [ ! curl -I http://localhost:$PORT &> /dev/null -a $ticks ]; do
 done
 
 if [ ! $ticks ]; then
-    echo "Timed out."
+    echo_err "Timed out."
     exit 1
 fi
 
 url="$URL/?password=$password"
 # $C9 browser "$url"
-echo "Running phpLiteAdmin at $url"
-echo -n "Exit with ctrl-c..."
+
+if [[ $URL_ONLY ]]; then
+    echo "$url"
+else
+    echo "Running phpLiteAdmin at $url"
+    echo -n "Exit with ctrl-c..."
+fi
 
 # listen for ctrl-c
 # http://stackoverflow.com/a/5722850
