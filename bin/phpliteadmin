@@ -5,10 +5,14 @@ function echo_err() {
     >&2 echo "$1"
 }
 
-# usage
-if [[ $# -lt 1 || $# -gt 2 ]]; then
+function usage() {
     echo_err "Usage: phpliteadmin [--url-only] FILENAME"
     exit 1
+}
+
+# usage
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    usage
 fi
 
 # parse command-line args
@@ -25,7 +29,9 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-if [[ ! -f "$DB_FILE" ]]; then
+if [[ -z "$DB_FILE" ]]; then
+    usage
+elif [[ ! -f "$DB_FILE" ]]; then
     echo_err "phpliteadmin: $DB_FILE: No such file"
     exit 1
 fi
