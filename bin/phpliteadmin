@@ -91,6 +91,10 @@ cat > "$temp/phpliteadmin.config.php" <<EOF
     // disable garbage collection of session
     ini_set("session.gc_probability", 0);
 
+    // pass PHPSESSID via URL
+    ini_set("session.use_cookies", "0");
+    ini_set("session.use_only_cookies", "0");
+    ini_set("session.use_trans_sid", "1");
 ?>
 EOF
 cat > "$temp/index.php" <<EOF
