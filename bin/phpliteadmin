@@ -147,4 +147,4 @@ fi
 trap "{ kill -9 $pid &>/dev/null; rm -rf "$temp"; echo; }" EXIT
 
 # wait for server to exit
-wait $pid
+wait $pid &> /dev/null
