@@ -52,7 +52,7 @@ if command -v hostname50 > /dev/null 2>&1; then
     HOSTNAME=$(hostname50 --protocol)
 fi
 
-PORT="8082"
+PORT="8081"
 URL="$HOSTNAME:$PORT"
 path=$(readlink -m "$DB_FILE")
 name=$(basename ${path%.*})
