@@ -6,7 +6,7 @@ function _toggleAutoIncrement(i) {
     if (!autoIncrement)
         return false;
 
-    if (selectedOption == "integer" || selectOption == "bigint" && document.querySelector(`#i${i}_primarykey`).checked) {
+    if (selectedOption == "integer" || selectedOption == "bigint" && document.querySelector(`#i${i}_primarykey`).checked) {
         autoIncrement.disabled = false;
     }
     else {
