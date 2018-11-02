@@ -4238,7 +4238,7 @@ echo '    const selectedOption = typesMenu.options[typesMenu.selectedIndex].valu
 echo '    const autoIncrement = document.querySelector(`#i${i}_autoincrement`);';
 echo '    if (!autoIncrement)';
 echo '        return false;';
-echo '    if (selectedOption == "integer" && document.querySelector(`#i${i}_primarykey`).checked) {';
+echo '    if (selectedOption == "integer" || selectedOption == "bigint" && document.querySelector(`#i${i}_primarykey`).checked) {';
 echo '        autoIncrement.disabled = false;';
 echo '    }';
 echo '    else {';
@@ -4387,6 +4387,7 @@ echo '		menu.innerHTML = `${selectedOption.outerHTML} ${menu.innerHTML}`;';
 echo '        menu.selectedIndex = 0;';
 echo '    }';
 echo '});';
+echo 'document.querySelectorAll("input[type=text]").forEach(e => e.setAttribute("autocomplete", "off"));';
 echo '</script>';
 echo "</body>";
 echo "</html>";
