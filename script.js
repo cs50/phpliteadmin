@@ -189,3 +189,6 @@ typesMenus.forEach(menu => {
         menu.selectedIndex = 0;
     }
 });
+
+
+document.querySelectorAll("input[type=text]").forEach(e => e.setAttribute("autocomplete", "off"));
